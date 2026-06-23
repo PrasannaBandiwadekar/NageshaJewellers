@@ -1,0 +1,144 @@
+.static-page {
+  padding-bottom: var(--space-2xl);
+}
+
+.static-content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.static-content p {
+  margin-bottom: var(--space-md);
+  color: #4F4536;
+  line-height: 1.8;
+  font-size: 1.02rem;
+}
+
+/* ---------- Services page ---------- */
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+.service-card {
+  background: var(--color-ivory-deep);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.service-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-espresso);
+}
+
+.service-card p {
+  font-size: 0.92rem;
+  color: #5C5142;
+  line-height: 1.65;
+}
+
+/* ---------- Collections page ---------- */
+
+.collections-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.collection-banner {
+  position: relative;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: block;
+}
+
+.collection-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+
+.collection-banner:hover img {
+  transform: scale(1.05);
+}
+
+.collection-banner-label {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,22,18,0.65), transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-md);
+  color: var(--color-ivory);
+}
+
+.collection-banner-label h3 {
+  font-size: 1.3rem;
+}
+
+.collection-banner-label span {
+  font-size: 0.82rem;
+  color: var(--color-gold);
+}
+
+/* ---------- Contact page ---------- */
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: var(--space-xl);
+  padding: var(--space-lg) 0 var(--space-2xl);
+}
+
+.contact-block {
+  margin-bottom: var(--space-lg);
+}
+
+.contact-block h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-gold-deep);
+}
+
+.contact-block p {
+  color: #4F4536;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.contact-block a {
+  color: var(--color-espresso);
+  text-decoration: underline;
+}
+
+.directions-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-weight: 600;
+  color: var(--color-gold-deep) !important;
+  text-decoration: none !important;
+}
+
+.contact-map {
+  min-height: 420px;
+}
+
+@media (max-width: 860px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .collections-banner-grid {
+    grid-template-columns: 1fr;
+  }
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,214 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-ivory);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.announcement-bar {
+  background: var(--color-espresso);
+  color: var(--color-ivory);
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  padding: 0.55rem var(--space-sm);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  gap: var(--space-md);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.logo-sub {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-deep);
+  margin-top: 2px;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: 0.84rem;
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--color-line);
+  margin: 0 0.25rem;
+}
+
+.main-nav a {
+  position: relative;
+  padding: 0.25rem 0;
+  transition: color 0.2s var(--ease);
+}
+
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--color-gold);
+  transition: width 0.25s var(--ease);
+}
+
+.main-nav a:hover::after {
+  width: 100%;
+}
+
+.nav-shop-all {
+  color: var(--color-gold-deep);
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--color-espresso);
+  transition: background 0.2s var(--ease);
+}
+.icon-btn:hover {
+  background: var(--color-ivory-deep);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--color-gold-deep);
+  color: var(--color-white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-menu {
+  position: relative;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px rgba(43, 35, 28, 0.12);
+  min-width: 190px;
+  padding: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  transition: background 0.15s var(--ease);
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: var(--color-ivory-deep);
+}
+
+.account-greeting {
+  padding: 0.5rem 0.75rem 0.25rem;
+  font-size: 0.78rem;
+  color: var(--color-gold-deep);
+  font-weight: 600;
+}
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0.5rem;
+}
+
+.mobile-menu-btn span {
+  width: 22px;
+  height: 1.5px;
+  background: var(--color-espresso);
+}
+
+@media (max-width: 860px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .main-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 78%;
+    max-width: 320px;
+    background: var(--color-ivory);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 5rem var(--space-lg) var(--space-lg);
+    gap: var(--space-md);
+    font-size: 1.1rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s var(--ease);
+    box-shadow: 12px 0 30px rgba(0,0,0,0.08);
+  }
+
+  .main-nav.is-open {
+    transform: translateX(0);
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+
+  .nav-divider {
+    display: none;
+  }
+}

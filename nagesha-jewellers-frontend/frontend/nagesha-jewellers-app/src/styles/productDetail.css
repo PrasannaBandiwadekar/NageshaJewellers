@@ -1,0 +1,135 @@
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl) 0 var(--space-2xl);
+}
+
+.pd-main-image {
+  aspect-ratio: 4/5;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-ivory-deep);
+}
+
+.pd-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pd-thumbnails {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: var(--space-sm);
+}
+
+.pd-thumbnails button {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.6;
+  transition: all 0.2s var(--ease);
+}
+
+.pd-thumbnails button.is-active {
+  border-color: var(--color-gold);
+  opacity: 1;
+}
+
+.pd-thumbnails img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pd-info h1 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin: 0.3rem 0 0.2rem;
+}
+
+.pd-material {
+  color: #76695A;
+  font-size: 0.92rem;
+  margin-bottom: var(--space-md);
+}
+
+.pd-price-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: var(--space-sm);
+}
+
+.pd-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pd-compare-price {
+  font-size: 1.05rem;
+  color: #A39C8E;
+  text-decoration: line-through;
+}
+
+.pd-stock-out {
+  color: var(--color-error);
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-bottom: var(--space-sm);
+}
+
+.pd-description {
+  color: #4F4536;
+  line-height: 1.75;
+  margin-bottom: var(--space-lg);
+}
+
+.pd-purchase-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.qty-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+}
+
+.qty-selector button {
+  width: 38px;
+  height: 44px;
+  font-size: 1.1rem;
+  color: var(--color-espresso);
+}
+
+.qty-selector span {
+  width: 36px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.pd-purchase-row .btn {
+  flex: 1;
+}
+
+.pd-meta {
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--space-md);
+  font-size: 0.88rem;
+  color: #5C5142;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 860px) {
+  .product-detail {
+    grid-template-columns: 1fr;
+  }
+}
