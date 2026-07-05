@@ -19,6 +19,8 @@ namespace NageshaJewellers.API.Models
         public string ShippingPostalCode { get; set; } = string.Empty;
 
         // These two come from Razorpay (the payment gateway) once payment happens
+        //For future reference, you can also store the Razorpay signature if you want
+        //to verify the payment on your server.
         public string? RazorpayOrderId { get; set; }
         public string? RazorpayPaymentId { get; set; }
         public string PaymentStatus { get; set; } = "Unpaid"; // Unpaid, Paid, Failed

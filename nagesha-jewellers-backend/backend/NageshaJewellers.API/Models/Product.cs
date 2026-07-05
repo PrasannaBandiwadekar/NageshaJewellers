@@ -21,5 +21,8 @@ namespace NageshaJewellers.API.Models
         // category, or to its list of photos, without writing extra SQL.
         public Category? Category { get; set; }
         public List<ProductImage> Images { get; set; } = new();
+        public string? MetalType { get; set; }
+        public decimal? WeightInGrams { get; set; }
+        public decimal? MakingChargePercent { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NageshaJewellers.API.Data;
@@ -7,7 +7,6 @@ using NageshaJewellers.API.Models;
 
 namespace NageshaJewellers.API.Controllers
 {
-    // Base URL: /api/products
     [ApiController]
     [Route("api/products")]
     public class ProductsController : ControllerBase
@@ -22,7 +21,6 @@ namespace NageshaJewellers.API.Controllers
         // GET /api/products
         // GET /api/products?categorySlug=earrings
         // GET /api/products?featured=true
-        // Anyone can call this - no login needed. Used for the shop/listing page.
         [HttpGet]
         public async Task<ActionResult<List<ProductDto>>> GetProducts(
             [FromQuery] string? categorySlug,
@@ -41,14 +39,14 @@ namespace NageshaJewellers.API.Controllers
 
             var products = await query
                 .OrderByDescending(p => p.CreatedAt)
-                .Select(p => MapToDto(p))
                 .ToListAsync();
 
-            return Ok(products);
+            var rates = await GetCurrentRatesAsync();
+            var result = products.Select(p => MapToDto(p, rates)).ToList();
+            return Ok(result);
         }
 
-        // GET /api/products/pearl-medallion-necklace
-        // Returns one product by its URL-friendly slug, for the product detail page
+        // GET /api/products/some-slug
         [HttpGet("{slug}")]
         public async Task<ActionResult<ProductDto>> GetProductBySlug(string slug)
         {
@@ -60,16 +58,11 @@ namespace NageshaJewellers.API.Controllers
             if (product == null)
                 return NotFound(new { message = "Product not found." });
 
-            return Ok(MapToDto(product));
+            var rates = await GetCurrentRatesAsync();
+            return Ok(MapToDto(product, rates));
         }
 
-        // ===========================================================
-        // EVERYTHING BELOW THIS LINE IS FOR ADMIN ONLY
-        // [Authorize(Roles = "Admin")] means: you must be logged in
-        // AND your account's Role must be "Admin", or you get rejected.
-        // ===========================================================
-
-        // POST /api/products  (create a new product)
+        // POST /api/products
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductCreateUpdateDto dto)
@@ -82,31 +75,32 @@ namespace NageshaJewellers.API.Controllers
                 Slug = slug,
                 Description = dto.Description,
                 Material = dto.Material,
-                Price = dto.Price,
+                Price = dto.Price ?? 0,
                 CompareAtPrice = dto.CompareAtPrice,
                 StockQuantity = dto.StockQuantity,
                 SKU = dto.SKU,
                 CategoryId = dto.CategoryId,
                 IsFeatured = dto.IsFeatured,
                 IsActive = dto.IsActive,
+                MetalType = dto.MetalType,
+                WeightInGrams = dto.WeightInGrams,
+                MakingChargePercent = dto.MakingChargePercent,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
             for (int i = 0; i < dto.Images.Count; i++)
-            {
                 product.Images.Add(new ProductImage { ImageUrl = dto.Images[i], DisplayOrder = i });
-            }
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-
             await _context.Entry(product).Reference(p => p.Category).LoadAsync();
 
-            return Ok(MapToDto(product));
+            var rates = await GetCurrentRatesAsync();
+            return Ok(MapToDto(product, rates));
         }
 
-        // PUT /api/products/5  (edit an existing product)
+        // PUT /api/products/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(int id, ProductCreateUpdateDto dto)
@@ -122,27 +116,34 @@ namespace NageshaJewellers.API.Controllers
             product.Name = dto.Name;
             product.Description = dto.Description;
             product.Material = dto.Material;
-            product.Price = dto.Price;
+            product.Price = dto.Price ?? 0;
             product.CompareAtPrice = dto.CompareAtPrice;
             product.StockQuantity = dto.StockQuantity;
             product.SKU = dto.SKU;
             product.CategoryId = dto.CategoryId;
             product.IsFeatured = dto.IsFeatured;
             product.IsActive = dto.IsActive;
+            product.MetalType = dto.MetalType;
+            product.WeightInGrams = dto.WeightInGrams;
+            product.MakingChargePercent = dto.MakingChargePercent;
             product.UpdatedAt = DateTime.UtcNow;
 
-            // Replace images with the new list sent from the admin form
+            // Mark every property as modified so EF Core definitely saves them all.
+            // This is the key fix - without this, EF Core sometimes skips columns
+            // that were added via ALTER TABLE instead of EF migrations.
+            _context.Entry(product).State = EntityState.Modified;
+
+            // Replace images
             _context.ProductImages.RemoveRange(product.Images);
             product.Images.Clear();
             for (int i = 0; i < dto.Images.Count; i++)
-            {
                 product.Images.Add(new ProductImage { ImageUrl = dto.Images[i], DisplayOrder = i });
-            }
 
             await _context.SaveChangesAsync();
             await _context.Entry(product).Reference(p => p.Category).LoadAsync();
 
-            return Ok(MapToDto(product));
+            var rates = await GetCurrentRatesAsync();
+            return Ok(MapToDto(product, rates));
         }
 
         // DELETE /api/products/5
@@ -154,18 +155,38 @@ namespace NageshaJewellers.API.Controllers
             if (product == null)
                 return NotFound(new { message = "Product not found." });
 
-            // We don't actually delete it from the database (that could break
-            // old orders that reference it). We just hide it from shoppers.
             product.IsActive = false;
             await _context.SaveChangesAsync();
-
             return Ok(new { message = "Product removed." });
         }
 
-        // ---------- Helper methods (not API endpoints, just reused code) ----------
+        // ---------- Helpers ----------
 
-        private static ProductDto MapToDto(Product p)
+        // Fetch all rates once per request - efficient and avoids
+        // repeated DB calls when mapping a list of products
+        private async Task<Dictionary<string, decimal>> GetCurrentRatesAsync()
         {
+            var rates = await _context.MetalRates.ToListAsync();
+            return rates.ToDictionary(r => r.MetalType, r => r.RatePerGram);
+        }
+
+        private static ProductDto MapToDto(Product p, Dictionary<string, decimal> rates)
+        {
+            var price = p.Price;
+            decimal? compareAt = p.CompareAtPrice;
+
+            // Calculate live price if this product has metal type and weight
+            if (!string.IsNullOrEmpty(p.MetalType)
+                && p.WeightInGrams.HasValue
+                && p.WeightInGrams > 0
+                && rates.TryGetValue(p.MetalType, out var liveRate))
+            {
+                var metalCost = p.WeightInGrams.Value * liveRate;
+                var makingCharge = metalCost * ((p.MakingChargePercent ?? 0) / 100m);
+                price = Math.Round(metalCost + makingCharge, 2);
+                compareAt = null;
+            }
+
             return new ProductDto
             {
                 ProductId = p.ProductId,
@@ -173,19 +194,21 @@ namespace NageshaJewellers.API.Controllers
                 Slug = p.Slug,
                 Description = p.Description,
                 Material = p.Material,
-                Price = p.Price,
-                CompareAtPrice = p.CompareAtPrice,
+                Price = price,
+                CompareAtPrice = compareAt.HasValue ? Math.Round(compareAt.Value, 2) : null,
                 StockQuantity = p.StockQuantity,
                 IsFeatured = p.IsFeatured,
                 CategoryName = p.Category?.Name ?? "",
                 CategorySlug = p.Category?.Slug ?? "",
-                Images = p.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).ToList()
+                Images = p.Images.OrderBy(i => i.DisplayOrder)
+                                 .Select(i => i.ImageUrl).ToList(),
+                MetalType = p.MetalType,
+                WeightInGrams = p.WeightInGrams,
+                MakingChargePercent = p.MakingChargePercent
             };
         }
 
-        // Turns "Pearl Medallion Necklace" into "pearl-medallion-necklace-4821"
-        // (the random number at the end avoids clashes if two products have the same name)
-        private string GenerateSlug(string name)
+        private static string GenerateSlug(string name)
         {
             var basicSlug = name.ToLower().Trim()
                 .Replace(" ", "-")

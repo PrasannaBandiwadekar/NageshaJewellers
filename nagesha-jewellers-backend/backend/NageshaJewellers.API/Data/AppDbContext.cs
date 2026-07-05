@@ -20,6 +20,7 @@ namespace NageshaJewellers.API.Data
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<CartItem> CartItems => Set<CartItem>();
+        public DbSet<MetalRate> MetalRates => Set<MetalRate>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +46,9 @@ namespace NageshaJewellers.API.Data
             modelBuilder.Entity<Product>().Property(p => p.CompareAtPrice).HasColumnType("decimal(10,2)");
             modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(10,2)");
             modelBuilder.Entity<OrderItem>().Property(oi => oi.UnitPrice).HasColumnType("decimal(10,2)");
+            modelBuilder.Entity<MetalRate>().Property(m => m.RatePerGram).HasColumnType("decimal(12,2)");
+            modelBuilder.Entity<Product>().Property(p => p.WeightInGrams).HasColumnType("decimal(8,3)");
+            modelBuilder.Entity<Product>().Property(p => p.MakingChargePercent).HasColumnType("decimal(5,2)");
 
             base.OnModelCreating(modelBuilder);
         }

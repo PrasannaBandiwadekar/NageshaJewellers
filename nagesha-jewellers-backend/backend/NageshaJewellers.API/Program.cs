@@ -108,6 +108,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Metal rate service - fetches live gold/silver rates from GoldAPI
+builder.Services.AddSingleton<MetalRateService>();
+
+// Background job that calls MetalRateService every hour automatically
+builder.Services.AddHostedService<RateFetcherBackgroundService>();
+
 var app = builder.Build();
 
 // ---------- 6. Turn on Swagger so you can visit /swagger in your browser ----------

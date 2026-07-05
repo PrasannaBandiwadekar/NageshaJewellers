@@ -15,6 +15,9 @@ namespace NageshaJewellers.API.DTOs
         public string CategoryName { get; set; } = string.Empty;
         public string CategorySlug { get; set; } = string.Empty;
         public List<string> Images { get; set; } = new();
+        public string? MetalType { get; set; }
+        public decimal? WeightInGrams { get; set; }
+        public decimal? MakingChargePercent { get; set; }
     }
 
     // Sent FROM React TO the API, when admin creates or edits a product
@@ -23,14 +26,17 @@ namespace NageshaJewellers.API.DTOs
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Material { get; set; }
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
         public decimal? CompareAtPrice { get; set; }
         public int StockQuantity { get; set; }
         public string? SKU { get; set; }
+        public string? MetalType { get; set; }
+        public decimal? WeightInGrams { get; set; }
+        public decimal? MakingChargePercent { get; set; }
         public int CategoryId { get; set; }
         public bool IsFeatured { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<string> Images { get; set; } = new(); // image URLs
+        public List<string> Images { get; set; } = new();
     }
 
     public class CategoryDto
@@ -41,7 +47,6 @@ namespace NageshaJewellers.API.DTOs
         public string? ImageUrl { get; set; }
     }
 
-    // Returned to the Admin panel, which needs to see inactive categories too
     public class AdminCategoryDto
     {
         public int CategoryId { get; set; }
@@ -52,7 +57,6 @@ namespace NageshaJewellers.API.DTOs
         public bool IsActive { get; set; }
     }
 
-    // Sent FROM React TO the API, when admin creates or edits a category
     public class CategoryCreateUpdateDto
     {
         public string Name { get; set; } = string.Empty;
