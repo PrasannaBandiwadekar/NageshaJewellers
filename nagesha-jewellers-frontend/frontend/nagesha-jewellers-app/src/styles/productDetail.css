@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-xl);
-  padding: var(--space-xl) 0 var(--space-2xl);
+  padding: var(--space-xl) 0 var(--space-lg);
 }
 
 .pd-main-image {
@@ -47,7 +47,18 @@
 
 .pd-info h1 {
   font-size: clamp(1.6rem, 3vw, 2.2rem);
-  margin: 0.3rem 0 0.2rem;
+  margin: 0.3rem 0 0.4rem;
+}
+
+/* Star rating link shown just under the product name */
+.pd-rating-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-gold-deep);
+  text-decoration: underline;
+  margin-bottom: 0.6rem;
 }
 
 .pd-material {
@@ -72,6 +83,18 @@
   font-size: 1.05rem;
   color: #A39C8E;
   text-decoration: line-through;
+}
+
+/* Badge shown for gold/silver live-priced products */
+.pd-live-rate-note {
+  font-size: 0.82rem;
+  color: #5C5142;
+  background: var(--color-ivory-deep);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: var(--space-sm);
+  line-height: 1.5;
 }
 
 .pd-stock-out {
